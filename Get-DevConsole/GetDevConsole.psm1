@@ -20,7 +20,6 @@ function Get-DevConsoleCookies($url)
     if ([GetCookies.Program]::cookies -eq $null)
     {
         [GetCookies.Program]::Main($url)
-
     }
 
     $cookies = [GetCookies.Program]::cookies;
