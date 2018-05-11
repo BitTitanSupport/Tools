@@ -20,4 +20,4 @@ $cookies = Get-DevConsoleCookies $URL
 $filename = Get-LastestDevConsoleFilename $URL $cookies
 
 # Download the lastest DevConsole file.
-Download-DevConsole $URL $filename $cookies
+Download-DevConsole $URL $cookies $filename  $filename 
