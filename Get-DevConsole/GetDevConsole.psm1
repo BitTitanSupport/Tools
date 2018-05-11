@@ -17,10 +17,13 @@ function Get-DevConsoleCookies($url)
 
     Add-Type -Path ".\GetCookies.cs" -ReferencedAssemblies @("System.Windows.Forms","System.Drawing") -ErrorAction SilentlyContinue
 
-    [GetCookies.Program]::Main($url)
+    if ([GetCookies.Program]::cookies -eq $null)
+    {
+        [GetCookies.Program]::Main($url)
+
+    }
 
     $cookies = [GetCookies.Program]::cookies;
-
     return $cookies
 }
 
@@ -45,7 +48,7 @@ function Get-LastestDevConsoleFilename($URL, $cookies)
 <#
 Download the lastest DevConsole.
 #>
-function Download-DevConsole($URL, $filename, $cookies)
+function Download-DevConsole($URL, $cookies, $filename, $outfile)
 {
     $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
     foreach ($cookie in $cookies.getCookies($URL))
@@ -53,5 +56,5 @@ function Download-DevConsole($URL, $filename, $cookies)
         $session.Cookies.Add($cookie);
     }
 
-    $page = Invoke-WebRequest "$URL/$filename" -WebSession $session -OutFile $filename
+    $page = Invoke-WebRequest "$URL/$filename" -WebSession $session -OutFile $outfile
 }
