@@ -94,7 +94,7 @@ function Connect-Office365($credentials)
 }
 
 ################################################################################
-# Get-Office365Users
+# Get all users from Office 365
 ################################################################################
 function Get-Office365Users
 {
@@ -114,7 +114,7 @@ function Get-Office365Users
 }
 
 ################################################################################
-# Remove-Office365User
+# Remove a user from Office 365
 ################################################################################
 function Remove-Office365User($user)
 {
@@ -134,7 +134,7 @@ function Remove-Office365User($user)
 }
 
 ############################################################
-# Create test user
+# Create a new user in Office 365
 ############################################################
 function New-Office365User($email, $firstName, $lastName, $sku, $defaultPassword)
 {
@@ -154,9 +154,9 @@ function New-Office365User($email, $firstName, $lastName, $sku, $defaultPassword
 }
 
 ############################################################
-# Create test users
+# Add test users to Office 365
 ############################################################
-function New-Office365Users($max, $defaultPassword)
+function Add-Office365Users($max, $defaultPassword)
 {
     # Gets the SKUs... we'll grab the first one - lazy
     try
@@ -197,7 +197,7 @@ function New-Office365Users($max, $defaultPassword)
 }
 
 ################################################################################
-# Reset-Office365Users
+# Reset all Office365 Users
 ################################################################################
 function Reset-Office365Users($maxUser, $defaultPassword)
 {
@@ -215,11 +215,11 @@ function Reset-Office365Users($maxUser, $defaultPassword)
             }
         }
     }
-    return New-Office365Users -max $maxUser -defaultPassword $defaultPassword
+    return Add-Office365Users -max $maxUser -defaultPassword $defaultPassword
 }
 
 ############################################################
-# Test-IsTenantDehydrated
+# Test if a Tenant is Dehydrated
 ############################################################
 function Test-IsTenantDehydrated()
 {
@@ -239,7 +239,7 @@ function Test-IsTenantDehydrated()
 }
 
 ############################################################
-# Test-UserHasImpersonationRights
+# Test if a user had Impersonation Rights
 ############################################################
 function Test-HasImpersonationRights($username)
 {
@@ -259,7 +259,7 @@ function Test-HasImpersonationRights($username)
 }
 
 ############################################################
-# Enable-TenantCustomization
+# Enable OrganizationCustomization for the tenant if not hydrated
 ############################################################
 function Enable-TenantCustomization()
 {
@@ -279,7 +279,7 @@ function Enable-TenantCustomization()
 }
 
 ############################################################
-# Add-ImpersonationRights
+# Add Impersonation Rights to a user
 ############################################################
 function Add-ImpersonationRights($username)
 {
@@ -299,7 +299,7 @@ function Add-ImpersonationRights($username)
 }
 
 ################################################################################
-# Enable Impersonation
+# Confirms if user has Impersonation Rights
 ################################################################################
 function Confirm-ImpersonationRights($username)
 {
@@ -332,7 +332,7 @@ function Confirm-ImpersonationRights($username)
 }
 
 ################################################################################
-# Reset-Office365Tenant
+# Reset Office365 Tenant
 ################################################################################
 function Reset-Office365Tenant($credentials, $defaultPassword, $maxUser)
 {
