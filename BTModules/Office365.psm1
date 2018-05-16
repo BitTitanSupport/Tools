@@ -63,14 +63,14 @@ function Connect-Office365($credentials)
     try
     {
         DisplayInProgressOperation "Import PSSession"
-        Import-PSSession $Session -AllowClobber -DisableNameChecking | Out-Null
+        Import-PSSession $session -AllowClobber -DisableNameChecking | Out-Null
         DisplayCompletedOperation "OK" Green
     }
     catch
     {
         DisplayCompletedOperation "FAIL" Red
         Write-Host -ForegroundColor Red "ERROR: Import-PSSession failed with $_"
-        return 0
+        return $false
     }
     
     return $session    
