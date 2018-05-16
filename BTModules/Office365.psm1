@@ -125,7 +125,7 @@ function New-Office365User($email, $firstName, $lastName, $sku, $defaultPassword
     {
         $displayName = "$firstName $lastName"
         DisplayInProgressOperation "Creating $email"
-        New-MsolUser -DisplayName $displayName -FirstName $firstName -LastName $lastName -UserPrincipalName $email -UsageLocation "US" -LicenseAssignment $sku -Password $defaultPassword -ForceChangePassword $false| Out-Null
+        New-MsolUser -DisplayName $displayName -FirstName $firstName -LastName $lastName -UserPrincipalName $email -UsageLocation "US" -LicenseAssignment $sku -Password $defaultPassword -ForceChangePassword $false | Out-Null
         DisplayCompletedOperation "OK" Green
     }
     catch
