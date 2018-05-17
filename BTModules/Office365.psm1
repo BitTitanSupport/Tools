@@ -77,6 +77,33 @@ function Connect-Office365($credentials)
 }
 
 ################################################################################
+# Get available SKUs
+################################################################################
+function Get-AvailableAccountSku()
+{
+    try
+    {
+        DisplayInProgressOperation "Get All Office 365 Users Account Sku"
+        $SKUs = Get-MsolAccountSku | Where-Object {$_.ActiveUnits -gt $_.ConsumedUnits}
+        DisplayCompletedOperation "OK" Green
+
+        if ($null -eq $SKUs)
+        {
+            Write-Host -ForegroundColor Red "FATAL: No SKUs available"
+            return $false
+        }
+        
+        return $SKUs
+    }
+    catch
+    {
+        DisplayCompletedOperation "FAIL" Red
+        Write-Host -ForegroundColor Red "ERROR: Get-MsolUser failed with $_"
+        return $false
+    }
+}
+
+################################################################################
 # Get all users from Office 365
 ################################################################################
 function Get-Office365Users

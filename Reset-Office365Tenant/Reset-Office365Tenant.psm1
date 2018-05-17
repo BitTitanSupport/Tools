@@ -12,17 +12,21 @@ $ErrorActionPreference = "Stop"
 ############################################################
 function Add-Office365Users($max, $defaultPassword)
 {
-    # Gets the SKUs... we'll grab the first one - lazy
-    try
+    $skus = Get-AvailableAccountSku
+    if ($false -eq $skus)
     {
-        $SKUs = Get-MsolAccountSku
-    }
-    catch
-    {
-        Write-Host -ForegroundColor Red "ERROR: Get-MsolAccountSku failed with $_"
         return $false
     }
-
+    else
+    {
+        $availableSkus = $($skus[0].ActiveUnits - $skus[0].ConsumedUnits)
+        if ($max -gt $availableSkus)
+        {
+            Write-Host -ForegroundColor Yellow "WARNING: Only $($skus[0].ActiveUnits - $skus[0].ConsumedUnits) SKUs for $max."
+            $max = $availableSkus
+        }
+    }
+    
     # Gets the Domains... we'll grab the first one - lazy
     try
     {
@@ -40,7 +44,7 @@ function Add-Office365Users($max, $defaultPassword)
         $firstName = "Test" -F $number
         $lastName  = "{0:D3}" -F $number
         $email     = "test{0:D3}@{1}" -F $number, $Domains[0].Name
-        $sku       = $SKUs[0].AccountSkuId
+        $sku       = $skus[0].AccountSkuId
 
         if ($false -eq $(New-Office365User -email $email -firstName $firstName -lastName $lastName -sku $sku -defaultPassword $defaultPassword))
         {
