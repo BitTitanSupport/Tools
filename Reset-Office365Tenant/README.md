@@ -1,24 +1,24 @@
 # SYNOPSIS
 Resets an Office 365 Tenant.
 
-# DESCRIPTION
+## DESCRIPTION
 This script will reset an Office 365 tenant to be used by BitTitan Support team.
 
-# PARAMETER credentials
+## PARAMETER credentials
 The credentials to Connect to Office 365.
 
-# PARAMETER defaultPassword
+## PARAMETER defaultPassword
 The default password for all the users created in Office 365.
 
-# PARAMETER maxUser
+## PARAMETER maxUser
 The maximum number of user to create.
 
-# EXAMPLE
+## EXAMPLE
 
     $credentials = Get-Credential
     Reset-Office365Tenant.ps1 -maxUser 10 -defaultPassword "OinkOink" -credentials $credentials
 
-# NOTES
+## NOTES
 General notes
 
 This script will:
