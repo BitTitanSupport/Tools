@@ -12,13 +12,17 @@ $ErrorActionPreference = "Stop"
 ############################################################
 function Add-Office365Users($max, $defaultPassword)
 {
+    # Get available SKUs.
     $skus = Get-AvailableAccountSku
+
+    # If no SKUs are available
     if ($false -eq $skus)
     {
         return $false
     }
     else
     {
+        # Cap the max number of users created to the number of available SKU
         $availableSkus = $($skus[0].ActiveUnits - $skus[0].ConsumedUnits)
         if ($max -gt $availableSkus)
         {
@@ -26,7 +30,7 @@ function Add-Office365Users($max, $defaultPassword)
             $max = $availableSkus
         }
     }
-    
+
     # Gets the Domains... we'll grab the first one - lazy
     try
     {
