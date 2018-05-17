@@ -31,10 +31,10 @@ function Add-Office365Users($max, $defaultPassword)
         }
     }
 
-    # Gets the Domains... we'll grab the first one - lazy
+    # Gets the Primary SMTPAddressTemplate to build the user email address
     try
     {
-        $Domains = Get-MsolDomain
+        $primarySMTPAddressTemplate = Get-EnabledPrimarySMTPAddressTemplate
     }
     catch
     {
@@ -47,10 +47,10 @@ function Add-Office365Users($max, $defaultPassword)
     {
         $firstName = "Test" -F $number
         $lastName  = "{0:D3}" -F $number
-        $email     = "test{0:D3}@{1}" -F $number, $Domains[0].Name
+        $email     = "test{0:D3}{1}" -F $number, $primarySMTPAddressTemplate
         $sku       = $skus[0].AccountSkuId
 
-        if ($false -eq $(New-Office365User -email $email -firstName $firstName -lastName $lastName -sku $sku -defaultPassword $defaultPassword))
+        if ($false -eq $(New-Office365User -email $email -firstName $firstName -lastName $lastName -usageLocation "US" -sku $sku -defaultPassword $defaultPassword))
         {
             return $false
         }
@@ -116,6 +116,30 @@ function Confirm-ImpersonationRights($username)
 ################################################################################
 # Reset Office365 Tenant
 ################################################################################
+
+
+<#
+.SYNOPSIS
+#
+
+.DESCRIPTION
+Long description
+
+.PARAMETER credentials
+Parameter description
+
+.PARAMETER defaultPassword
+Parameter description
+
+.PARAMETER maxUser
+Parameter description
+
+.EXAMPLE
+An example
+
+.NOTES
+General notes
+#>
 function Reset-Office365Tenant($credentials, $defaultPassword, $maxUser)
 {
     if ($null -eq $credentials)

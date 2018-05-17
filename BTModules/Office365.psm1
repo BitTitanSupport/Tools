@@ -14,7 +14,7 @@ function Clear-PSSession
 {
     try
     {
-        DisplayInProgressOperation "Remove PSSessions"
+        DisplayInProgressOperation "Remove PS Sessions"
         Get-PSSession | Remove-PSSession
         DisplayCompletedOperation "OK" Green
     }
@@ -48,7 +48,7 @@ function Connect-Office365($credentials)
     # Create new PSSession
     try
     {
-        DisplayInProgressOperation "Create New-PSSession"
+        DisplayInProgressOperation "Create PS Session"
         $session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "https://outlook.office365.com/powershell-liveid/" -Credential $credentials -Authentication Basic -AllowRedirection
         DisplayCompletedOperation "OK" Green
     }
@@ -103,6 +103,26 @@ function Get-AvailableAccountSku()
     }
 }
 
+############################################################
+# Test if a Tenant is Dehydrated
+############################################################
+function Get-EnabledPrimarySMTPAddressTemplate()
+{
+    try
+    {
+        DisplayInProgressOperation "Test if the tenant is dehydrated"
+        $primarySMTPAddressTemplate = Get-EmailAddressPolicy | Select-Object -ExpandProperty EnabledPrimarySMTPAddressTemplate
+        DisplayCompletedOperation "OK" Green
+        return $primarySMTPAddressTemplate
+    }
+    catch
+    {
+        DisplayCompletedOperation "FAIL" Red
+        Write-Host -ForegroundColor Red "ERROR: Get-EmailAddressPolicy failed with $_"
+        return $null
+    }
+}
+
 ################################################################################
 # Get all users from Office 365
 ################################################################################
@@ -146,13 +166,13 @@ function Remove-Office365User($user)
 ############################################################
 # Create a new user in Office 365
 ############################################################
-function New-Office365User($email, $firstName, $lastName, $sku, $defaultPassword)
+function New-Office365User($email, $firstName, $lastName, $usageLocation, $sku, $defaultPassword)
 {
     try
     {
         $displayName = "$firstName $lastName"
         DisplayInProgressOperation "Creating $email"
-        New-MsolUser -DisplayName $displayName -FirstName $firstName -LastName $lastName -UserPrincipalName $email -UsageLocation "US" -LicenseAssignment $sku -Password $defaultPassword -ForceChangePassword $false | Out-Null
+        New-MsolUser -DisplayName $displayName -FirstName $firstName -LastName $lastName -UserPrincipalName $email -UsageLocation $usageLocation -LicenseAssignment $sku -Password $defaultPassword -ForceChangePassword $false | Out-Null
         DisplayCompletedOperation "OK" Green
     }
     catch
