@@ -2,7 +2,7 @@
 .NOTES
     Company:        BitTitan, Inc.
     Title:          Get-PublicFolderSplitFolders.ps1
-    Author:         fabricel@bittitan.com
+    Author:         support@bittitan.com
     
     Version:        1.00
     Date:           May 21, 2018
