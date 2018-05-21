@@ -12,34 +12,35 @@ $ErrorActionPreference = "Stop"
 ################################################################################
 function Get-AllMailboxesForConnector ($credentials, $impersonateUserId, $connectorID)
 {
-    # Get a MigrationWiz Ticket.
+    # Get a MigrationWiz Ticket
     $mwTicket = Get-MigrationWizTicket $Credentials
     if ($false -eq $mwticket)
     {
         return $false
     }
 
-    # Get a MigrationWiz Impersonated Ticket.
+    # Get a MigrationWiz Impersonated Ticket
     $mwUserTicket = Get-MigrationWizImpersonatedTicket -ticket $mwTicket -credentials $credentials -impersonateUserId $impersonateUserId
     if ($false -eq $mwUserTicket)
     {
         return $false
     }
 
-    # Get the connector.
+    # Get the connector
     $connector = Get-MigrationWizConnector -ticket $mwUserTicket -connectorId $connectorID
     if ($false -eq $connector)
     {
         return $false
     }
 
-    if (! $connector)
+    # If no connector found
+    if ($null -eq $connector)
     {
         Write-Host -ForegroundColor Red "No connector found with ID $connectorID."
         return $false
     }
 
-    # Get the connector.
+    # Get all the mailboxes for this connector
     $mailboxes = Get-MigrationWizMailboxes -ticket $mwUserTicket -connectorId $connectorID
     if ($false -eq $mailboxes)
     {

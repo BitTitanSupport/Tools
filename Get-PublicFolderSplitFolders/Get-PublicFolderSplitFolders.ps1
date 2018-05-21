@@ -5,21 +5,22 @@
     Author:         fabricel@bittitan.com
     
     Version:        1.00
-    Date:           April 27, 2017
+    Date:           May 21, 2018
 
     Disclaimer:     This script is provided ‘AS IS’. No warranty is provided either expresses or implied.
 
-    Copyright:      Copyright © 2017 BitTitan. All rights reserved.
+    Copyright:      Copyright © 2018 BitTitan. All rights reserved.
     
 .DESCRIPTION    
     Generates a full report of the decoded filters for a Public Folder Split project.
 
 .INPUTS
+    -Credentials Input type [PSCredential]
     -ImpersonateUserId Input type [Guid]
     -ConnectorID Input type [Guid]
 
 .EXAMPLE
-    .\Get-PublicFolderSplitFolders.ps1 -MWCredentials $credentials -ImpersonateUserId 12345678-0000-0000-0000-000000000000 -ConnectorID 87654321-0000-0000-0000-000000000000 > filters.txt
+    .\Get-PublicFolderSplitFolders.ps1 [-Credentials $credentials] -ImpersonateUserId 12345678-0000-0000-0000-000000000000 -ConnectorID 87654321-0000-0000-0000-000000000000 > filters.txt
 #>
 
 param(
@@ -43,47 +44,57 @@ $ErrorActionPreference = "Stop"
 # Import-Module
 $scriptPath = $script:MyInvocation.MyCommand.Path
 $scriptDirectory = Split-Path $scriptPath
-Import-Module "$scriptDirectory\..\BTModulesBTSupport.psm1" -Force -DisableNameChecking
-Import-Module "$scriptDirectory\..\BTModulesBTMigrationWiz.psm1" -Force -DisableNameChecking
+Import-Module "$scriptDirectory\..\BTModules\BTSupport.psm1" -Force -DisableNameChecking
+Import-Module "$scriptDirectory\..\BTModules\BTMigrationWiz.psm1" -Force -DisableNameChecking
 Import-Module "$scriptDirectory\Get-PublicFolderSplitFolders.psm1" -Force -DisableNameChecking
 
-if ($null -eq $credentials)
+# Import BitTitan PowerShell Module
+if (Import-BitTitanPowerShellModule)
 {
-    $credentials = Get-UserCredential -message "Enter your MigrationWiz Credentials"
-}
-
-if ($null -ne $credentials)
-{
-    $mailboxes = Get-AllMailboxesForConnector -credentials $Credentials -impersonateUserId $ImpersonateUserId -connectorID $ConnectorID
-    if ($true -eq $mailboxes)
+    # Ask for credentials if not provided
+    if ($null -eq $Credentials)
     {
-        foreach ($mailbox in $mailboxes)
+        $Credentials = Get-UserCredential -message "Enter your MigrationWiz Credentials"
+    }
+
+    # If we have credentials
+    if ($null -ne $Credentials)
+    {
+        # Get all the mailboxes for this connector
+        $mailboxes = Get-AllMailboxesForConnector -credentials $Credentials -impersonateUserId $ImpersonateUserId -connectorID $ConnectorID
+
+        if ($true -eq $mailboxes)
         {
-            $mailboxID = $mailbox.ID
-            $folderFilter = $mailbox.FolderFilter
-            Write-Output "Found MailboxID [$mailboxID] -> \"
-            Write-Output "Mailbox Link [https://migrationwiz.bittitan.com/app/projects/$ConnectorID/$mailboxID/edit] -> \"
-
-            # Get the filter for current line item
-            $includeFilter = $folderFilter -replace '^(#includes_encoded=([a-z0-9|=]+))','$2'
-            $filters = $includeFilter.Split('|')
-
-            # Loop through all filters
-            foreach ($filter in $filters)
+            foreach ($mailbox in $mailboxes)
             {
-                try
-                {
-                    # Replace the '#' with '+' if any. Hack!
-                    $filter = $filter.Replace('#', '+')
+                $mailboxID = $mailbox.ID
+                $folderFilter = $mailbox.FolderFilter
+                $publicFolderPath = $mailbox.PublicFolderPath
 
-                    # Decode the string.
-                    $decoded = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($filter))
+                Write-Output "Found MailboxID [$mailboxID] -> $publicFolderPath"
+                Write-Output "Mailbox Link [https://migrationwiz.bittitan.com/app/projects/$ConnectorID/$mailboxID/edit]"
 
-                    Write-Output " Found Filter [$decoded]"
-                }
-                catch
+                # Get the filter for current line item
+                $includeFilter = $folderFilter -replace '^(#includes_encoded=([a-z0-9|=]+))','$2'
+                $filters = $includeFilter.Split('|')
+
+                # Loop through all the filters
+                foreach ($filter in $filters)
                 {
-                    Write-Host " Error $($PSItem.ToString())."
+                    try
+                    {
+                        # Replace the '#' with '+' if any. Hack!
+                        $filter = $filter.Replace('#', '+')
+
+                        # Decode the string.
+                        $decoded = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($filter))
+
+                        Write-Output " Found Filter [$decoded]"
+                    }
+                    catch
+                    {
+                        Write-Host " Error $($PSItem.ToString())."
+                    }
                 }
             }
         }
