@@ -33,7 +33,7 @@ function Get-AllMailboxesForConnector ($credentials, $impersonateUserId, $connec
         return $false
     }
 
-    # If no connector found
+    # Exit if no connector found
     if ($null -eq $connector)
     {
         Write-Host -ForegroundColor Red "No connector found with ID $connectorID."
