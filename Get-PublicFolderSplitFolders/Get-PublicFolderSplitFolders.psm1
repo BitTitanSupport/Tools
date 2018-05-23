@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 function Get-AllMailboxesForConnector ($credentials, $impersonateUserId, $connectorID)
 {
     # Get a MigrationWiz Ticket
-    $mwTicket = Get-MigrationWizTicket $Credentials
+    $mwTicket = Get-MigrationWizTicket $credentials
     if ($false -eq $mwticket)
     {
         return $false
