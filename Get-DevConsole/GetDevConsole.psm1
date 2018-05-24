@@ -7,9 +7,7 @@ $ProgressPreference ="SilentlyContinue"
 # Set default ErrorAction to Stop.
 $ErrorActionPreference = "Stop"
 
-<#
-Get the auth cookie for a site using the CS code. 
-#>
+# Get the auth cookie for a site using the CS code. 
 function Get-DevConsoleCookies($url)
 {
     $null = [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
@@ -26,9 +24,7 @@ function Get-DevConsoleCookies($url)
     return $cookies
 }
 
-<#
-Get the name of the lastest DevConsole.
-#>
+# Get the name of the lastest DevConsole.
 function Get-LastestDevConsoleFilename($URL, $cookies)
 {
     $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
@@ -36,6 +32,9 @@ function Get-LastestDevConsoleFilename($URL, $cookies)
     {
         $session.Cookies.Add($cookie);
     }
+
+    # Force TLS 1.2
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $page = Invoke-WebRequest $URL -WebSession $session
 
     if ($page -match "<A HREF=""/(BitTitan.DevConsole.*?)""")
@@ -44,9 +43,7 @@ function Get-LastestDevConsoleFilename($URL, $cookies)
     }
 }
 
-<#
-Download the lastest DevConsole.
-#>
+# Download the lastest DevConsole.
 function Download-DevConsole($URL, $cookies, $filename, $outfile)
 {
     $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
@@ -55,5 +52,7 @@ function Download-DevConsole($URL, $cookies, $filename, $outfile)
         $session.Cookies.Add($cookie);
     }
 
-    $page = Invoke-WebRequest "$URL/$filename" -WebSession $session -OutFile $outfile
+    # Force TLS 1.2
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest "$URL/$filename" -WebSession $session -OutFile $outfile | Out-Null
 }
