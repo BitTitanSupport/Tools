@@ -136,3 +136,30 @@ function Get-UserCredential($message = "Enter your Credentials")
         return $null
     }
 }
+
+################################################################################
+# Export List of Customer End Users to CSV
+################################################################################
+function Export-CustomerEndUsersToCsv($ticket, $customerDomainName, $csvPath = "${env:USERPROFILE}\Desktop\CustomerCSV.csv")
+{
+    try
+    {
+        # Get the list of end users.
+        $endUsers = Get-BT_CustomerEndUser -Ticket $ticket -CustomerPrimaryDomain $customerDomainName -RetrieveAll
+    }
+    catch
+    {
+        Write-Host -ForegroundColor Red "FATAL: Export-CustomerEndUserListToCsv failed with $_"
+    }
+
+    try
+    {
+       # Export the list of end users to a CSV on the desktop.
+        $endUsers | Export-Csv -Path $csvPath
+    }
+    catch
+    {
+        Write-Host -ForegroundColor Red "FATAL: Export-CustomerEndUserListToCsv failed with $_"
+        Write-Host -ForegroundColor Red "Could not export to CSV. Is the CSV already open in another program?"
+    }
+}
