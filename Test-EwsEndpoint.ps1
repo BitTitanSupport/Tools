@@ -1,4 +1,4 @@
-﻿<#
+<#
 .NOTES
     Company:          BitTitan, Inc.
     Title:            Test-EwsEndpoint.ps1
@@ -24,7 +24,7 @@
 
 
 Import-Module BTMigrationWiz.psm1
-Import-module BTSupport.psm1
+Import-Module BTSupport.psm1
 Import-BitTitanPowerShellModule
 
 
@@ -32,7 +32,7 @@ Import-BitTitanPowerShellModule
 function EWSUrlTest
 {
 
-    PARAM
+    Param
     (
         [Parameter(Mandatory=$true)]
         $EWS_URL,
@@ -143,7 +143,7 @@ function Test-EwsEndpoints
     $secureImportPassword = $($mailboxConnector.ImportAdministrativePassword) | ConvertTo-SecureString -AsPlainText -Force
     $secureImportCreds = New-Object System.Management.Automation.PSCredential -ArgumentList $($mailboxConnector.ImportAdministrativeUserName), $secureImportPassword
 
-    # Determine whether Office 365 or custome EWS URL will be used to test connectivity against
+    # Determine whether Office 365 or custom EWS URL will be used to test connectivity against
     if($mailboxConnector.ImportType -eq "ExchangeOnline2")
     {
         $importUrl = 'https://outlook.office365.com/EWS/Exchange.asmx'
