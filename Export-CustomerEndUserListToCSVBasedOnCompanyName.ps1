@@ -2,11 +2,11 @@
 <#
 .NOTES
     Company:          BitTitan, Inc.
-    Title:            Export Customer End User List to CSV.ps1
+    Title:            Export-CustomerEndUserListToCSVBasedOnCompanyName.ps1
     Author:           Support@BitTitan.com
 
     Version:          1.00
-    Date:             May 31, 2018
+    Date:             September 4, 2018
 
     Disclaimer:       This script is provided 'AS IS'. No warranty is provided either expressed or implied
 
@@ -50,7 +50,8 @@ catch
 try
 {
     # Export the list of end users to a CSV on the desktop.
-    $endUsers | Export-Csv -Path "${env:USERPROFILE}\Desktop\CustomerCSV_2.csv"
+    $endUsers | Export-Csv -Path "${env:USERPROFILE}\Desktop\$customerCompanyName EndUsers.csv" -NoTypeInformation
+    Write-Host "CSV `"$customerCompanyName EndUsers.csv`" successfully exported to the Desktop"
 }
 catch
 {
