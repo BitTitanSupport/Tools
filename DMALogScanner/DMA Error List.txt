@@ -1,0 +1,10 @@
+--Installation--
+Installation errors go in this section
+An error has occurred
+Cannot extract a token
+The path Proxy does not exist
+--Heartbeat--
+Heartbeat errors go here instead of this line
+--Configuration--
+Configuration errors go in this section
+Configuration failed
